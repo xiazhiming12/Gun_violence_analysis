@@ -98,10 +98,5 @@ plt.title('Incidents Count by Time Slot and Community Area')
 plt.tight_layout()
 plt.show()
 
-g = sns.catplot(x='COMMUNITY_AREA', kind='count', col='LOCATION_DESCRIPTION', col_wrap=3, data=df, height=4, aspect=1.5, hue='TIME_SLOT', palette='Set2')
-g.set_axis_labels("Community Area", "Incident Count")
-g.set_titles("{col_name}")
-plt.subplots_adjust(top=0.9)
-plt.suptitle('Incident Count by Time Slot, Community Area, and Location Description', fontsize=16)
-plt.tight_layout()
-plt.show()
+output_csv = "modified_file.csv"
+df.to_csv(output_csv, index=False)
