@@ -15,6 +15,8 @@ df['DATE'] = pd.to_datetime(df['DATE'])
 df['YEAR'] = df['DATE'].dt.year
 df['MONTH'] = df['DATE'].dt.month
 df['DAY'] = df['DATE'].dt.day
+df['HOUR'] = df['DATE'].dt.hour
+
 grouped_by_year = df.groupby('YEAR').size().reset_index(name='incident_count')
 plt.figure(figsize=(10, 6))
 plt.bar(grouped_by_year['YEAR'], grouped_by_year['incident_count'], color='skyblue')
@@ -59,5 +61,47 @@ sns.heatmap(pivot_table, cmap='viridis', linecolor='white', linewidth=1)
 plt.xlabel('Sex & Race')
 plt.ylabel('Age')
 plt.title('Incidents Count by Sex, Race, and Age')
+plt.tight_layout()
+plt.show()
+
+community_area_counts = df['COMMUNITY_AREA'].value_counts()
+top_10_community_areas = community_area_counts.head(10)
+plt.figure(figsize=(12, 8))
+top_10_community_areas.plot(kind='bar', color='skyblue')
+plt.xlabel('Community Area')
+plt.ylabel('Incident Count')
+plt.title('Top 10 Community Areas with the Highest Incident Counts')
+plt.xticks(rotation=90)
+plt.tight_layout()
+plt.show()
+
+def categorize_hour(hour):
+    if 6 <= hour < 11:
+        return 'Morning'
+    elif 11 <= hour < 13:
+        return 'Noon'
+    elif 13 <= hour < 18:
+        return 'Afternoon'
+    elif 18 <= hour < 24:
+        return 'Night'
+    else:
+        return 'Midnight'
+
+df['TIME_SLOT'] = df['HOUR'].apply(categorize_hour)
+time_community_counts = df.groupby(['TIME_SLOT', 'COMMUNITY_AREA']).size().reset_index(name='incident_count')
+pivot_table = time_community_counts.pivot_table(index='COMMUNITY_AREA', columns='TIME_SLOT', values='incident_count', fill_value=0)
+plt.figure(figsize=(12, 8))
+sns.heatmap(pivot_table, cmap='Blues', linecolor='white', linewidth=1)
+plt.xlabel('Time Slot')
+plt.ylabel('Community Area')
+plt.title('Incidents Count by Time Slot and Community Area')
+plt.tight_layout()
+plt.show()
+
+g = sns.catplot(x='COMMUNITY_AREA', kind='count', col='LOCATION_DESCRIPTION', col_wrap=3, data=df, height=4, aspect=1.5, hue='TIME_SLOT', palette='Set2')
+g.set_axis_labels("Community Area", "Incident Count")
+g.set_titles("{col_name}")
+plt.subplots_adjust(top=0.9)
+plt.suptitle('Incident Count by Time Slot, Community Area, and Location Description', fontsize=16)
 plt.tight_layout()
 plt.show()
