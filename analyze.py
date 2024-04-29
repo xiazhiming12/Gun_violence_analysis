@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 df = pd.read_csv("Victims.csv")
+print(df.info())
 
 df['DATE'] = pd.to_datetime(df['DATE'])
 df['YEAR'] = df['DATE'].dt.year
